@@ -135,12 +135,12 @@ function Hero() {
               Explore languages
             </a>
           </div>
-          <div className="mt-10 flex items-center gap-6 text-sm text-ink/70">
-            <div><span className="font-display font-bold text-ink text-2xl">12+</span> languages</div>
+          <div className="mt-10 flex items-center gap-3 sm:gap-6 text-xs sm:text-sm text-ink/70">
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">12+</span> languages</div>
             <div className="h-8 w-px bg-ink/20" />
-            <div><span className="font-display font-bold text-ink text-2xl">100%</span> native voices</div>
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">100%</span> native voices</div>
             <div className="h-8 w-px bg-ink/20" />
-            <div><span className="font-display font-bold text-ink text-2xl">5min</span> a day</div>
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">5min</span> a day</div>
           </div>
         </div>
 
