@@ -73,7 +73,7 @@ const features = [
 function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-      <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2.5">
           <img
             src={iconImg}
@@ -107,7 +107,7 @@ function Hero() {
     <section id="top" className="relative overflow-hidden">
       <div className="absolute inset-0 gradient-sun opacity-95" />
       <div className="absolute inset-0 pattern-kente opacity-60" />
-      <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-28 grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink text-sun text-xs font-semibold tracking-wide uppercase mb-6">
             <span className="size-1.5 rounded-full bg-sun animate-pulse" />
@@ -135,12 +135,12 @@ function Hero() {
               Explore languages
             </a>
           </div>
-          <div className="mt-10 flex items-center gap-6 text-sm text-ink/70">
-            <div><span className="font-display font-bold text-ink text-2xl">12+</span> languages</div>
+          <div className="mt-10 flex items-center gap-3 sm:gap-6 text-xs sm:text-sm text-ink/70">
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">12+</span> languages</div>
             <div className="h-8 w-px bg-ink/20" />
-            <div><span className="font-display font-bold text-ink text-2xl">100%</span> native voices</div>
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">100%</span> native voices</div>
             <div className="h-8 w-px bg-ink/20" />
-            <div><span className="font-display font-bold text-ink text-2xl">5min</span> a day</div>
+            <div><span className="font-display font-bold text-ink text-xl sm:text-2xl">5min</span> a day</div>
           </div>
         </div>
 
@@ -166,8 +166,8 @@ function Hero() {
 
 function Languages() {
   return (
-    <section id="languages" className="py-28 bg-background">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="languages" className="py-16 sm:py-24 lg:py-28 bg-background">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl mb-16">
           <div className="text-sm font-semibold uppercase tracking-wider text-sun-deep mb-3">
             Twelve languages · One nation
@@ -181,20 +181,26 @@ function Languages() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {languages.map((l, i) => (
             <div
               key={l.name}
-              className="group relative bg-card border-2 border-ink rounded-2xl p-6 hover:bg-sun hover:-translate-y-1 transition-bounce cursor-pointer"
+              className="group relative bg-card border-2 border-ink rounded-2xl p-4 sm:p-6 hover:bg-sun hover:-translate-y-1 transition-bounce cursor-pointer min-w-0"
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              <div className="font-display text-3xl font-black">{l.name}</div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground group-hover:text-ink/60 mt-1">
+              <div className="font-display text-xl sm:text-2xl lg:text-3xl font-black break-words leading-tight">
+                {l.name}
+              </div>
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground group-hover:text-ink/60 mt-1 break-words">
                 {l.region}
               </div>
-              <div className="mt-6 pt-4 border-t border-border group-hover:border-ink/20">
-                <div className="text-xs text-muted-foreground group-hover:text-ink/60">Hello</div>
-                <div className="font-display text-xl font-semibold mt-0.5">"{l.greeting}"</div>
+              <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border group-hover:border-ink/20">
+                <div className="text-[10px] sm:text-xs text-muted-foreground group-hover:text-ink/60">
+                  Hello
+                </div>
+                <div className="font-display text-base sm:text-lg lg:text-xl font-semibold mt-0.5 break-words">
+                  "{l.greeting}"
+                </div>
               </div>
             </div>
           ))}
@@ -206,9 +212,9 @@ function Languages() {
 
 function Features() {
   return (
-    <section id="features" className="py-28 bg-ink text-cream relative overflow-hidden">
+    <section id="features" className="py-16 sm:py-24 lg:py-28 bg-ink text-cream relative overflow-hidden">
       <div className="absolute inset-0 pattern-kente opacity-10" />
-      <div className="relative mx-auto max-w-7xl px-6">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl mb-16">
           <div className="text-sm font-semibold uppercase tracking-wider text-sun mb-3">
             Built for real learners
@@ -239,8 +245,8 @@ function Features() {
 
 function Mission() {
   return (
-    <section id="mission" className="py-28 bg-background">
-      <div className="mx-auto max-w-5xl px-6 text-center">
+    <section id="mission" className="py-16 sm:py-24 lg:py-28 bg-background">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
         <div className="text-sm font-semibold uppercase tracking-wider text-sun-deep mb-4">
           Why GoGhana matters
         </div>
@@ -274,8 +280,8 @@ function Mission() {
 
 function CTA() {
   return (
-    <section id="download" className="py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="download" className="py-16 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-[2.5rem] gradient-sun border-2 border-ink shadow-bold p-12 md:p-20 text-center">
           <div className="absolute inset-0 pattern-kente opacity-50" />
           <div className="relative">
@@ -313,7 +319,7 @@ function CTA() {
 function Footer() {
   return (
     <footer className="border-t border-border py-10">
-      <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <img src={iconImg} alt="" width={24} height={24} loading="lazy" className="rounded" />
           <span className="font-display font-bold text-ink">GoGhana</span>
@@ -327,7 +333,7 @@ function Footer() {
 
 function Index() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header />
       <main>
         <Hero />
