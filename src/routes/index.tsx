@@ -107,7 +107,7 @@ function Hero() {
     <section id="top" className="relative overflow-hidden">
       <div className="absolute inset-0 gradient-sun opacity-95" />
       <div className="absolute inset-0 pattern-kente opacity-60" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-28 grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink text-sun text-xs font-semibold tracking-wide uppercase mb-6">
             <span className="size-1.5 rounded-full bg-sun animate-pulse" />
@@ -166,7 +166,7 @@ function Hero() {
 
 function Languages() {
   return (
-    <section id="languages" className="py-28 bg-background">
+    <section id="languages" className="py-16 sm:py-24 lg:py-28 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl mb-16">
           <div className="text-sm font-semibold uppercase tracking-wider text-sun-deep mb-3">
@@ -212,7 +212,7 @@ function Languages() {
 
 function Features() {
   return (
-    <section id="features" className="py-28 bg-ink text-cream relative overflow-hidden">
+    <section id="features" className="py-16 sm:py-24 lg:py-28 bg-ink text-cream relative overflow-hidden">
       <div className="absolute inset-0 pattern-kente opacity-10" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl mb-16">
@@ -245,7 +245,7 @@ function Features() {
 
 function Mission() {
   return (
-    <section id="mission" className="py-28 bg-background">
+    <section id="mission" className="py-16 sm:py-24 lg:py-28 bg-background">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
         <div className="text-sm font-semibold uppercase tracking-wider text-sun-deep mb-4">
           Why GoGhana matters
@@ -280,7 +280,7 @@ function Mission() {
 
 function CTA() {
   return (
-    <section id="download" className="py-28">
+    <section id="download" className="py-16 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-[2.5rem] gradient-sun border-2 border-ink shadow-bold p-12 md:p-20 text-center">
           <div className="absolute inset-0 pattern-kente opacity-50" />
