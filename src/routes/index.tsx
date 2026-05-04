@@ -181,20 +181,26 @@ function Languages() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {languages.map((l, i) => (
             <div
               key={l.name}
-              className="group relative bg-card border-2 border-ink rounded-2xl p-6 hover:bg-sun hover:-translate-y-1 transition-bounce cursor-pointer"
+              className="group relative bg-card border-2 border-ink rounded-2xl p-4 sm:p-6 hover:bg-sun hover:-translate-y-1 transition-bounce cursor-pointer min-w-0"
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              <div className="font-display text-3xl font-black">{l.name}</div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground group-hover:text-ink/60 mt-1">
+              <div className="font-display text-xl sm:text-2xl lg:text-3xl font-black break-words leading-tight">
+                {l.name}
+              </div>
+              <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground group-hover:text-ink/60 mt-1 break-words">
                 {l.region}
               </div>
-              <div className="mt-6 pt-4 border-t border-border group-hover:border-ink/20">
-                <div className="text-xs text-muted-foreground group-hover:text-ink/60">Hello</div>
-                <div className="font-display text-xl font-semibold mt-0.5">"{l.greeting}"</div>
+              <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border group-hover:border-ink/20">
+                <div className="text-[10px] sm:text-xs text-muted-foreground group-hover:text-ink/60">
+                  Hello
+                </div>
+                <div className="font-display text-base sm:text-lg lg:text-xl font-semibold mt-0.5 break-words">
+                  "{l.greeting}"
+                </div>
               </div>
             </div>
           ))}
