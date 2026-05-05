@@ -9,38 +9,126 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LearnRouteImport } from './routes/learn'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LearnLangRouteImport } from './routes/learn.$lang'
+import { Route as LearnLangLessonRouteImport } from './routes/learn.$lang.$lesson'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnLangRoute = LearnLangRouteImport.update({
+  id: '/$lang',
+  path: '/$lang',
+  getParentRoute: () => LearnRoute,
+} as any)
+const LearnLangLessonRoute = LearnLangLessonRouteImport.update({
+  id: '/$lesson',
+  path: '/$lesson',
+  getParentRoute: () => LearnLangRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/learn/$lang': typeof LearnLangRouteWithChildren
+  '/learn/$lang/$lesson': typeof LearnLangLessonRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/learn/$lang': typeof LearnLangRouteWithChildren
+  '/learn/$lang/$lesson': typeof LearnLangLessonRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/learn': typeof LearnRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/learn/$lang': typeof LearnLangRouteWithChildren
+  '/learn/$lang/$lesson': typeof LearnLangLessonRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/learn'
+    | '/profile'
+    | '/learn/$lang'
+    | '/learn/$lang/$lesson'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/learn'
+    | '/profile'
+    | '/learn/$lang'
+    | '/learn/$lang/$lesson'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/learn'
+    | '/profile'
+    | '/learn/$lang'
+    | '/learn/$lang/$lesson'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  LearnRoute: typeof LearnRouteWithChildren
+  ProfileRoute: typeof ProfileRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +136,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn/$lang': {
+      id: '/learn/$lang'
+      path: '/$lang'
+      fullPath: '/learn/$lang'
+      preLoaderRoute: typeof LearnLangRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/learn/$lang/$lesson': {
+      id: '/learn/$lang/$lesson'
+      path: '/$lesson'
+      fullPath: '/learn/$lang/$lesson'
+      preLoaderRoute: typeof LearnLangLessonRouteImport
+      parentRoute: typeof LearnLangRoute
+    }
   }
 }
 
+interface LearnLangRouteChildren {
+  LearnLangLessonRoute: typeof LearnLangLessonRoute
+}
+
+const LearnLangRouteChildren: LearnLangRouteChildren = {
+  LearnLangLessonRoute: LearnLangLessonRoute,
+}
+
+const LearnLangRouteWithChildren = LearnLangRoute._addFileChildren(
+  LearnLangRouteChildren,
+)
+
+interface LearnRouteChildren {
+  LearnLangRoute: typeof LearnLangRouteWithChildren
+}
+
+const LearnRouteChildren: LearnRouteChildren = {
+  LearnLangRoute: LearnLangRouteWithChildren,
+}
+
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  LearnRoute: LearnRouteWithChildren,
+  ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
