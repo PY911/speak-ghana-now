@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import iconImg from "@/assets/goghana-icon.png";
 import heroImg from "@/assets/hero-learners.jpg";
 
@@ -91,12 +91,12 @@ function Header() {
           <a href="#features" className="hover:text-sun-deep transition-colors">Features</a>
           <a href="#mission" className="hover:text-sun-deep transition-colors">Mission</a>
         </nav>
-        <a
-          href="#download"
+        <Link
+          to="/auth"
           className="inline-flex items-center px-4 py-2 rounded-full bg-ink text-sun text-sm font-semibold hover:scale-105 transition-bounce"
         >
-          Get the app
-        </a>
+          Start learning
+        </Link>
       </div>
     </header>
   );
@@ -122,12 +122,12 @@ function Hero() {
             more indigenous languages — through immersive, gamified lessons.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="#download"
+            <Link
+              to="/auth"
               className="px-7 py-4 rounded-2xl bg-ink text-sun font-semibold shadow-bold hover:translate-x-[-2px] hover:translate-y-[-2px] transition-bounce"
             >
               Start learning free
-            </a>
+            </Link>
             <a
               href="#languages"
               className="px-7 py-4 rounded-2xl bg-cream text-ink font-semibold border-2 border-ink hover:bg-ink hover:text-sun transition-colors"
