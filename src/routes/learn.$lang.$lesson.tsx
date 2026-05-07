@@ -13,10 +13,17 @@ export const Route = createFileRoute("/learn/$lang/$lesson")({
 type Step =
   | { kind: "flash"; word: Word }
   | { kind: "mc"; word: Word; options: string[] }
-  | { kind: "recall"; word: Word; options: string[] };
+  | { kind: "recall"; word: Word; options: string[] }
+  | { kind: "match"; pairs: Word[] };
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
 }
 
 function buildSteps(words: Word[]): Step[] {
@@ -33,6 +40,10 @@ function buildSteps(words: Word[]): Step[] {
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.english !== w.english)).slice(0, 3).map((x) => x.english);
     steps.push({ kind: "recall", word: w, options: shuffle([w.english, ...distractors]) });
+  });
+  // Phase 4: matching pairs (chunks of 4)
+  chunk(shuffle(words), 4).forEach((pairs) => {
+    if (pairs.length >= 2) steps.push({ kind: "match", pairs });
   });
   return steps;
 }
