@@ -265,3 +265,76 @@ function LessonPlayer() {
     </div>
   );
 }
+
+function MatchPanel({ pairs, onDone }: { pairs: Word[]; onDone: (score: number) => void }) {
+  const [natives] = useState(() => shuffle(pairs.map((p) => p.native)));
+  const [englishes] = useState(() => shuffle(pairs.map((p) => p.english)));
+  const [selectedN, setSelectedN] = useState<string | null>(null);
+  const [selectedE, setSelectedE] = useState<string | null>(null);
+  const [matched, setMatched] = useState<Set<string>>(new Set());
+  const [wrong, setWrong] = useState<{ n: string; e: string } | null>(null);
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    if (!selectedN || !selectedE) return;
+    const pair = pairs.find((p) => p.native === selectedN);
+    if (pair && pair.english === selectedE) {
+      setMatched((m) => new Set(m).add(selectedN));
+      setScore((s) => s + 1);
+      setSelectedN(null); setSelectedE(null);
+    } else {
+      setWrong({ n: selectedN, e: selectedE });
+      setTimeout(() => { setWrong(null); setSelectedN(null); setSelectedE(null); }, 600);
+    }
+  }, [selectedN, selectedE, pairs]);
+
+  useEffect(() => {
+    if (matched.size === pairs.length) {
+      const finalScore = score;
+      setTimeout(() => onDone(finalScore), 400);
+    }
+  }, [matched, pairs.length, score, onDone]);
+
+  const cls = (val: string, kind: "n" | "e") => {
+    const isMatched = kind === "n"
+      ? matched.has(val)
+      : pairs.some((p) => matched.has(p.native) && p.english === val);
+    const isSelected = (kind === "n" ? selectedN : selectedE) === val;
+    const isWrong = wrong && (kind === "n" ? wrong.n === val : wrong.e === val);
+    if (isMatched) return "border-ink bg-sun opacity-50 line-through";
+    if (isWrong) return "border-destructive bg-destructive/10";
+    if (isSelected) return "border-ink bg-sun";
+    return "border-ink/20 bg-card hover:border-ink";
+  };
+
+  return (
+    <div>
+      <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground">
+        Match the pairs
+      </p>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          {natives.map((n) => (
+            <button key={n} disabled={matched.has(n)}
+              onClick={() => setSelectedN(n)}
+              className={`w-full rounded-xl border-2 p-3 text-sm font-semibold transition ${cls(n, "n")}`}>
+              {n}
+            </button>
+          ))}
+        </div>
+        <div className="space-y-2">
+          {englishes.map((e) => {
+            const isMatched = pairs.some((p) => matched.has(p.native) && p.english === e);
+            return (
+              <button key={e} disabled={isMatched}
+                onClick={() => setSelectedE(e)}
+                className={`w-full rounded-xl border-2 p-3 text-sm font-semibold transition ${cls(e, "e")}`}>
+                {e}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
