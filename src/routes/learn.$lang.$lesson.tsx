@@ -128,7 +128,7 @@ function LessonPlayer() {
         <main className="mx-auto max-w-md px-4 py-12 text-center">
           <div className="text-6xl">🎉</div>
           <h1 className="mt-4 font-display text-4xl font-bold text-ink">Lesson complete!</h1>
-          <p className="mt-2 text-muted-foreground">You got {correct} out of {total * 2} right.</p>
+          <p className="mt-2 text-muted-foreground">You got {correct} answers right · {total} new words.</p>
           <div className="mt-6 rounded-2xl border-2 border-ink bg-sun p-5 shadow-bold">
             <div className="text-xs font-bold uppercase tracking-wider">Earned</div>
             <div className="font-display text-3xl font-bold">⭐ {correct * 5} XP</div>
