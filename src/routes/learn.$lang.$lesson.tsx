@@ -247,6 +247,19 @@ function LessonPlayer() {
               </div>
             </div>
           )}
+
+          {step.kind === "match" && (
+            <MatchPanel
+              pairs={step.pairs}
+              onDone={(score) => {
+                setCorrect((c) => c + score);
+                setTimeout(() => {
+                  if (idx + 1 >= steps.length) setDone(true);
+                  else setIdx((i) => i + 1);
+                }, 700);
+              }}
+            />
+          )}
         </div>
       </main>
     </div>
