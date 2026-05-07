@@ -44,7 +44,7 @@ const TWI: Lesson[] = [
   },
   {
     id: "numbers",
-    title: "Numbers 1–10",
+    title: "Numbers 1–6",
     emoji: "🔢",
     words: [
       { native: "Baako", english: "One" },
@@ -53,6 +53,45 @@ const TWI: Lesson[] = [
       { native: "Ɛnan", english: "Four" },
       { native: "Enum", english: "Five" },
       { native: "Nsia", english: "Six" },
+    ],
+  },
+  {
+    id: "colors",
+    title: "Colors",
+    emoji: "🎨",
+    words: [
+      { native: "Tuntum", english: "Black" },
+      { native: "Fitaa", english: "White" },
+      { native: "Kɔkɔɔ", english: "Red" },
+      { native: "Ahabammono", english: "Green" },
+      { native: "Bruu", english: "Blue" },
+      { native: "Akokɔsrade", english: "Yellow" },
+    ],
+  },
+  {
+    id: "food",
+    title: "Food",
+    emoji: "🍲",
+    words: [
+      { native: "Aduane", english: "Food" },
+      { native: "Nsuo", english: "Water" },
+      { native: "Fufuo", english: "Fufu" },
+      { native: "Banku", english: "Banku" },
+      { native: "Nam", english: "Meat" },
+      { native: "Nkwan", english: "Soup" },
+    ],
+  },
+  {
+    id: "phrases",
+    title: "Useful phrases",
+    emoji: "💬",
+    words: [
+      { native: "Wo ho te sɛn?", english: "How are you?" },
+      { native: "Me ho yɛ", english: "I am fine" },
+      { native: "Me din de…", english: "My name is…" },
+      { native: "Mepa wo kyɛw", english: "Please" },
+      { native: "Kafra", english: "Sorry" },
+      { native: "Aane", english: "Yes" },
     ],
   },
 ];
@@ -84,6 +123,45 @@ const GA: Lesson[] = [
       { native: "Banku", english: "Banku" },
     ],
   },
+  {
+    id: "numbers",
+    title: "Numbers",
+    emoji: "🔢",
+    words: [
+      { native: "Ekome", english: "One" },
+      { native: "Enyɔ", english: "Two" },
+      { native: "Etɛ", english: "Three" },
+      { native: "Ejwɛ", english: "Four" },
+      { native: "Enumɔ", english: "Five" },
+      { native: "Ekpaa", english: "Six" },
+    ],
+  },
+  {
+    id: "family",
+    title: "Family",
+    emoji: "👨‍👩‍👧",
+    words: [
+      { native: "Awo", english: "Mother" },
+      { native: "Tsɛ", english: "Father" },
+      { native: "Nyɛmi", english: "Sibling" },
+      { native: "Bi", english: "Child" },
+      { native: "Naa", english: "Grandmother" },
+      { native: "Nii", english: "Grandfather" },
+    ],
+  },
+  {
+    id: "phrases",
+    title: "Useful phrases",
+    emoji: "💬",
+    words: [
+      { native: "Ojogbaa", english: "Welcome" },
+      { native: "Ofainɛ", english: "Please" },
+      { native: "Kpaakpa", english: "Sorry" },
+      { native: "Hɛɛ", english: "Yes" },
+      { native: "Daabi", english: "No" },
+      { native: "Mi gbɛi ji…", english: "My name is…" },
+    ],
+  },
 ];
 
 const EWE: Lesson[] = [
@@ -111,6 +189,45 @@ const EWE: Lesson[] = [
       { native: "Xɔlɔ̃", english: "Friend" },
       { native: "Ɖevi", english: "Child" },
       { native: "Ame", english: "Person" },
+    ],
+  },
+  {
+    id: "numbers",
+    title: "Numbers",
+    emoji: "🔢",
+    words: [
+      { native: "Ɖeka", english: "One" },
+      { native: "Eve", english: "Two" },
+      { native: "Etɔ̃", english: "Three" },
+      { native: "Ene", english: "Four" },
+      { native: "Atɔ̃", english: "Five" },
+      { native: "Ade", english: "Six" },
+    ],
+  },
+  {
+    id: "food",
+    title: "Food",
+    emoji: "🍲",
+    words: [
+      { native: "Nuɖuɖu", english: "Food" },
+      { native: "Tsi", english: "Water" },
+      { native: "Akple", english: "Akple" },
+      { native: "Lã", english: "Meat" },
+      { native: "Detsi", english: "Soup" },
+      { native: "Mɔlu", english: "Rice" },
+    ],
+  },
+  {
+    id: "phrases",
+    title: "Useful phrases",
+    emoji: "💬",
+    words: [
+      { native: "Èfɔa?", english: "How are you?" },
+      { native: "Mefɔ nyuie", english: "I am fine" },
+      { native: "Ŋkɔnye…", english: "My name is…" },
+      { native: "Meɖe kuku", english: "Please" },
+      { native: "Tsɔm ke", english: "Sorry" },
+      { native: "Ɛ̃", english: "Yes" },
     ],
   },
 ];
@@ -142,6 +259,45 @@ const FANTE: Lesson[] = [
       { native: "Ɛyɛ fɛ", english: "It is nice" },
     ],
   },
+  {
+    id: "numbers",
+    title: "Numbers",
+    emoji: "🔢",
+    words: [
+      { native: "Baako", english: "One" },
+      { native: "Ebien", english: "Two" },
+      { native: "Ebiasa", english: "Three" },
+      { native: "Anan", english: "Four" },
+      { native: "Enum", english: "Five" },
+      { native: "Esia", english: "Six" },
+    ],
+  },
+  {
+    id: "family",
+    title: "Family",
+    emoji: "👨‍👩‍👧",
+    words: [
+      { native: "Ɛna", english: "Mother" },
+      { native: "Egya", english: "Father" },
+      { native: "Nuabanyin", english: "Brother" },
+      { native: "Nuabaa", english: "Sister" },
+      { native: "Abusua", english: "Family" },
+      { native: "Ba", english: "Child" },
+    ],
+  },
+  {
+    id: "phrases",
+    title: "Useful phrases",
+    emoji: "💬",
+    words: [
+      { native: "Mepaakyɛw", english: "Please" },
+      { native: "Kosɛ", english: "Sorry" },
+      { native: "Nyew", english: "Yes" },
+      { native: "Daabi", english: "No" },
+      { native: "Me din dze…", english: "My name is…" },
+      { native: "Yɛbɛhyia bio", english: "See you again" },
+    ],
+  },
 ];
 
 export const LANGUAGES: Language[] = [
@@ -162,3 +318,6 @@ export const LANGUAGES: Language[] = [
 export const findLanguage = (code: string) => LANGUAGES.find((l) => l.code === code);
 export const findLesson = (code: string, lessonId: string) =>
   findLanguage(code)?.lessons.find((l) => l.id === lessonId);
+
+// Daily goal: XP target per day
+export const DAILY_XP_GOAL = 30;

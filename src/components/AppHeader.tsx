@@ -36,6 +36,7 @@ export function AppHeader() {
                 </div>
               )}
               <Link to="/learn" className="rounded-lg px-3 py-2 font-semibold hover:bg-ink/5">Learn</Link>
+              <Link to="/leaderboard" className="rounded-lg px-3 py-2 font-semibold hover:bg-ink/5">🏆</Link>
               <Link to="/profile" className="rounded-lg px-3 py-2 font-semibold hover:bg-ink/5">Profile</Link>
               <button
                 onClick={async () => { await signOut(); navigate({ to: "/" }); }}

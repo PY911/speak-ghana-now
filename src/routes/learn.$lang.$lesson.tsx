@@ -13,10 +13,17 @@ export const Route = createFileRoute("/learn/$lang/$lesson")({
 type Step =
   | { kind: "flash"; word: Word }
   | { kind: "mc"; word: Word; options: string[] }
-  | { kind: "recall"; word: Word; options: string[] };
+  | { kind: "recall"; word: Word; options: string[] }
+  | { kind: "match"; pairs: Word[] };
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
 }
 
 function buildSteps(words: Word[]): Step[] {
@@ -33,6 +40,10 @@ function buildSteps(words: Word[]): Step[] {
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.english !== w.english)).slice(0, 3).map((x) => x.english);
     steps.push({ kind: "recall", word: w, options: shuffle([w.english, ...distractors]) });
+  });
+  // Phase 4: matching pairs (chunks of 4)
+  chunk(shuffle(words), 4).forEach((pairs) => {
+    if (pairs.length >= 2) steps.push({ kind: "match", pairs });
   });
   return steps;
 }
@@ -117,7 +128,7 @@ function LessonPlayer() {
         <main className="mx-auto max-w-md px-4 py-12 text-center">
           <div className="text-6xl">🎉</div>
           <h1 className="mt-4 font-display text-4xl font-bold text-ink">Lesson complete!</h1>
-          <p className="mt-2 text-muted-foreground">You got {correct} out of {total * 2} right.</p>
+          <p className="mt-2 text-muted-foreground">You got {correct} answers right · {total} new words.</p>
           <div className="mt-6 rounded-2xl border-2 border-ink bg-sun p-5 shadow-bold">
             <div className="text-xs font-bold uppercase tracking-wider">Earned</div>
             <div className="font-display text-3xl font-bold">⭐ {correct * 5} XP</div>
@@ -236,8 +247,94 @@ function LessonPlayer() {
               </div>
             </div>
           )}
+
+          {step.kind === "match" && (
+            <MatchPanel
+              pairs={step.pairs}
+              onDone={(score) => {
+                setCorrect((c) => c + score);
+                setTimeout(() => {
+                  if (idx + 1 >= steps.length) setDone(true);
+                  else setIdx((i) => i + 1);
+                }, 700);
+              }}
+            />
+          )}
         </div>
       </main>
+    </div>
+  );
+}
+
+function MatchPanel({ pairs, onDone }: { pairs: Word[]; onDone: (score: number) => void }) {
+  const [natives] = useState(() => shuffle(pairs.map((p) => p.native)));
+  const [englishes] = useState(() => shuffle(pairs.map((p) => p.english)));
+  const [selectedN, setSelectedN] = useState<string | null>(null);
+  const [selectedE, setSelectedE] = useState<string | null>(null);
+  const [matched, setMatched] = useState<Set<string>>(new Set());
+  const [wrong, setWrong] = useState<{ n: string; e: string } | null>(null);
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    if (!selectedN || !selectedE) return;
+    const pair = pairs.find((p) => p.native === selectedN);
+    if (pair && pair.english === selectedE) {
+      setMatched((m) => new Set(m).add(selectedN));
+      setScore((s) => s + 1);
+      setSelectedN(null); setSelectedE(null);
+    } else {
+      setWrong({ n: selectedN, e: selectedE });
+      setTimeout(() => { setWrong(null); setSelectedN(null); setSelectedE(null); }, 600);
+    }
+  }, [selectedN, selectedE, pairs]);
+
+  useEffect(() => {
+    if (matched.size === pairs.length) {
+      const finalScore = score;
+      setTimeout(() => onDone(finalScore), 400);
+    }
+  }, [matched, pairs.length, score, onDone]);
+
+  const cls = (val: string, kind: "n" | "e") => {
+    const isMatched = kind === "n"
+      ? matched.has(val)
+      : pairs.some((p) => matched.has(p.native) && p.english === val);
+    const isSelected = (kind === "n" ? selectedN : selectedE) === val;
+    const isWrong = wrong && (kind === "n" ? wrong.n === val : wrong.e === val);
+    if (isMatched) return "border-ink bg-sun opacity-50 line-through";
+    if (isWrong) return "border-destructive bg-destructive/10";
+    if (isSelected) return "border-ink bg-sun";
+    return "border-ink/20 bg-card hover:border-ink";
+  };
+
+  return (
+    <div>
+      <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground">
+        Match the pairs
+      </p>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          {natives.map((n) => (
+            <button key={n} disabled={matched.has(n)}
+              onClick={() => setSelectedN(n)}
+              className={`w-full rounded-xl border-2 p-3 text-sm font-semibold transition ${cls(n, "n")}`}>
+              {n}
+            </button>
+          ))}
+        </div>
+        <div className="space-y-2">
+          {englishes.map((e) => {
+            const isMatched = pairs.some((p) => matched.has(p.native) && p.english === e);
+            return (
+              <button key={e} disabled={isMatched}
+                onClick={() => setSelectedE(e)}
+                className={`w-full rounded-xl border-2 p-3 text-sm font-semibold transition ${cls(e, "e")}`}>
+                {e}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
