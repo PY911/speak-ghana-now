@@ -10,21 +10,16 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as LearnRouteImport } from './routes/learn'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnLangIndexRouteImport } from './routes/learn.$lang.index'
 import { Route as LearnLangLessonRouteImport } from './routes/learn.$lang.$lesson'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LearnRoute = LearnRouteImport.update({
-  id: '/learn',
-  path: '/learn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -42,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LearnIndexRoute = LearnIndexRouteImport.update({
+  id: '/learn/',
+  path: '/learn/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LearnLangIndexRoute = LearnLangIndexRouteImport.update({
   id: '/$lang/',
   path: '/$lang/',
@@ -57,8 +57,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
-  '/learn': typeof LearnRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/learn/': typeof LearnIndexRoute
   '/learn/$lang/$lesson': typeof LearnLangLessonRoute
   '/learn/$lang/': typeof LearnLangIndexRoute
 }
@@ -66,8 +66,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
-  '/learn': typeof LearnRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/learn': typeof LearnIndexRoute
   '/learn/$lang/$lesson': typeof LearnLangLessonRoute
   '/learn/$lang': typeof LearnLangIndexRoute
 }
@@ -76,8 +76,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/leaderboard': typeof LeaderboardRoute
-  '/learn': typeof LearnRouteWithChildren
   '/profile': typeof ProfileRoute
+  '/learn/': typeof LearnIndexRoute
   '/learn/$lang/$lesson': typeof LearnLangLessonRoute
   '/learn/$lang/': typeof LearnLangIndexRoute
 }
@@ -87,8 +87,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/leaderboard'
-    | '/learn'
     | '/profile'
+    | '/learn/'
     | '/learn/$lang/$lesson'
     | '/learn/$lang/'
   fileRoutesByTo: FileRoutesByTo
@@ -96,8 +96,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/leaderboard'
-    | '/learn'
     | '/profile'
+    | '/learn'
     | '/learn/$lang/$lesson'
     | '/learn/$lang'
   id:
@@ -105,8 +105,8 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/leaderboard'
-    | '/learn'
     | '/profile'
+    | '/learn/'
     | '/learn/$lang/$lesson'
     | '/learn/$lang/'
   fileRoutesById: FileRoutesById
@@ -115,8 +115,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   LeaderboardRoute: typeof LeaderboardRoute
-  LearnRoute: typeof LearnRouteWithChildren
   ProfileRoute: typeof ProfileRoute
+  LearnIndexRoute: typeof LearnIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -126,13 +126,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/learn': {
-      id: '/learn'
-      path: '/learn'
-      fullPath: '/learn'
-      preLoaderRoute: typeof LearnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -156,6 +149,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/learn/': {
+      id: '/learn/'
+      path: '/learn'
+      fullPath: '/learn/'
+      preLoaderRoute: typeof LearnIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/learn/$lang/': {
       id: '/learn/$lang/'
       path: '/$lang'
@@ -173,25 +173,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface LearnRouteChildren {
-  LearnLangLessonRoute: typeof LearnLangLessonRoute
-  LearnLangIndexRoute: typeof LearnLangIndexRoute
-}
-
-const LearnRouteChildren: LearnRouteChildren = {
-  LearnLangLessonRoute: LearnLangLessonRoute,
-  LearnLangIndexRoute: LearnLangIndexRoute,
-}
-
-const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   LeaderboardRoute: LeaderboardRoute,
-  LearnRoute: LearnRouteWithChildren,
   ProfileRoute: ProfileRoute,
+  LearnIndexRoute: LearnIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
