@@ -5,7 +5,7 @@ import { findLanguage } from "@/lib/lessons";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 
-export const Route = createFileRoute("/learn/$lang")({
+export const Route = createFileRoute("/learn/$lang/")({
   component: LangPage,
 });
 
