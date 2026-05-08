@@ -5,7 +5,7 @@ import { LANGUAGES, DAILY_XP_GOAL } from "@/lib/lessons";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 
-export const Route = createFileRoute("/learn")({
+export const Route = createFileRoute("/learn/")({
   head: () => ({
     meta: [
       { title: "Choose a language — GoGhana" },
