@@ -163,7 +163,51 @@ function LessonPlayer() {
     );
   }
 
-  const step = steps[idx];
+  // Intro screen — show tip & cultural note before starting
+  if (!started) {
+    return (
+      <div className="min-h-screen bg-cream">
+        <AppHeader />
+        <main className="mx-auto max-w-xl px-4 py-8">
+          <Link to="/learn/$lang" params={{ lang: code }} className="text-sm text-muted-foreground hover:text-ink">← Back</Link>
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-4xl">{lesson.emoji}</span>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{lang.name}</div>
+              <h1 className="font-display text-3xl font-bold text-ink">{lesson.title}</h1>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-4">
+            <div className="rounded-2xl border-2 border-ink bg-card p-5 shadow-bold">
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">What you'll learn</div>
+              <p className="mt-1 font-semibold">
+                {lesson.words.length} words
+                {lesson.sentences?.length ? ` and ${lesson.sentences.length} example phrases` : ""}.
+              </p>
+            </div>
+            {lesson.tip && (
+              <div className="rounded-2xl border-2 border-ink bg-sun/40 p-5 shadow-bold">
+                <div className="text-xs font-bold uppercase tracking-wider">💡 Tip</div>
+                <p className="mt-1 text-sm leading-relaxed">{lesson.tip}</p>
+              </div>
+            )}
+            {lesson.culturalNote && (
+              <div className="rounded-2xl border-2 border-ink bg-card p-5 shadow-bold">
+                <div className="text-xs font-bold uppercase tracking-wider">🌍 Cultural note</div>
+                <p className="mt-1 text-sm leading-relaxed">{lesson.culturalNote}</p>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setStarted(true)}
+            className="mt-8 w-full rounded-xl bg-ink py-4 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
+          >
+            Start lesson →
+          </button>
+        </main>
+      </div>
+    );
+  }
   const progress = ((idx) / steps.length) * 100;
 
   const pick = (opt: string, answer: string) => {
