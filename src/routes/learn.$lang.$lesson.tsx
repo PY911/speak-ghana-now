@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { findLanguage, findLesson, type Word } from "@/lib/lessons";
+import { findLanguage, findLesson, type Word, type Sentence } from "@/lib/lessons";
+import { speak, ttsAvailable } from "@/lib/tts";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { toast } from "sonner";
@@ -14,7 +15,8 @@ type Step =
   | { kind: "flash"; word: Word }
   | { kind: "mc"; word: Word; options: string[] }
   | { kind: "recall"; word: Word; options: string[] }
-  | { kind: "match"; pairs: Word[] };
+  | { kind: "match"; pairs: Word[] }
+  | { kind: "sentence"; sentence: Sentence };
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -26,26 +28,38 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out;
 }
 
-function buildSteps(words: Word[]): Step[] {
+function buildSteps(words: Word[], sentences?: Sentence[]): Step[] {
   const all = words;
   const steps: Step[] = [];
-  // Phase 1: flashcards (introduce)
   words.forEach((w) => steps.push({ kind: "flash", word: w }));
-  // Phase 2: multiple choice (english -> native)
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.native !== w.native)).slice(0, 3).map((x) => x.native);
     steps.push({ kind: "mc", word: w, options: shuffle([w.native, ...distractors]) });
   });
-  // Phase 3: recall (native -> english)
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.english !== w.english)).slice(0, 3).map((x) => x.english);
     steps.push({ kind: "recall", word: w, options: shuffle([w.english, ...distractors]) });
   });
-  // Phase 4: matching pairs (chunks of 4)
   chunk(shuffle(words), 4).forEach((pairs) => {
     if (pairs.length >= 2) steps.push({ kind: "match", pairs });
   });
+  sentences?.forEach((s) => steps.push({ kind: "sentence", sentence: s }));
   return steps;
+}
+
+function SpeakButton({ text, voiceLang, size = "md" }: { text: string; voiceLang?: string; size?: "sm" | "md" }) {
+  if (!ttsAvailable()) return null;
+  const px = size === "sm" ? "h-9 w-9 text-base" : "h-12 w-12 text-xl";
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); e.preventDefault(); speak(text, voiceLang); }}
+      aria-label={`Listen to ${text}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full border-2 border-ink bg-card ${px} shadow-bold transition-bounce hover:-translate-y-0.5 hover:bg-sun`}
+    >
+      🔊
+    </button>
+  );
 }
 
 function LessonPlayer() {
@@ -55,7 +69,8 @@ function LessonPlayer() {
   const lang = findLanguage(code);
   const lesson = findLesson(code, lessonId);
 
-  const steps = useMemo(() => (lesson ? buildSteps(lesson.words) : []), [lesson]);
+  const steps = useMemo(() => (lesson ? buildSteps(lesson.words, lesson.sentences) : []), [lesson]);
+  const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
@@ -138,11 +153,57 @@ function LessonPlayer() {
               className="rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5">
               Back to {lang.name}
             </Link>
-            <button onClick={() => { setIdx(0); setCorrect(0); setDone(false); setSaved(false); }}
+            <button onClick={() => { setIdx(0); setCorrect(0); setDone(false); setSaved(false); setStarted(true); }}
               className="rounded-xl border-2 border-ink py-3 font-semibold">
               Practice again
             </button>
           </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Intro screen — show tip & cultural note before starting
+  if (!started) {
+    return (
+      <div className="min-h-screen bg-cream">
+        <AppHeader />
+        <main className="mx-auto max-w-xl px-4 py-8">
+          <Link to="/learn/$lang" params={{ lang: code }} className="text-sm text-muted-foreground hover:text-ink">← Back</Link>
+          <div className="mt-4 flex items-center gap-3">
+            <span className="text-4xl">{lesson.emoji}</span>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{lang.name}</div>
+              <h1 className="font-display text-3xl font-bold text-ink">{lesson.title}</h1>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-4">
+            <div className="rounded-2xl border-2 border-ink bg-card p-5 shadow-bold">
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">What you'll learn</div>
+              <p className="mt-1 font-semibold">
+                {lesson.words.length} words
+                {lesson.sentences?.length ? ` and ${lesson.sentences.length} example phrases` : ""}.
+              </p>
+            </div>
+            {lesson.tip && (
+              <div className="rounded-2xl border-2 border-ink bg-sun/40 p-5 shadow-bold">
+                <div className="text-xs font-bold uppercase tracking-wider">💡 Tip</div>
+                <p className="mt-1 text-sm leading-relaxed">{lesson.tip}</p>
+              </div>
+            )}
+            {lesson.culturalNote && (
+              <div className="rounded-2xl border-2 border-ink bg-card p-5 shadow-bold">
+                <div className="text-xs font-bold uppercase tracking-wider">🌍 Cultural note</div>
+                <p className="mt-1 text-sm leading-relaxed">{lesson.culturalNote}</p>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setStarted(true)}
+            className="mt-8 w-full rounded-xl bg-ink py-4 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
+          >
+            Start lesson →
+          </button>
         </main>
       </div>
     );
@@ -184,11 +245,17 @@ function LessonPlayer() {
                   <div className="font-display text-4xl font-bold text-ink sm:text-5xl">
                     {flipped ? step.word.english : step.word.native}
                   </div>
+                  {!flipped && step.word.pronunciation && (
+                    <div className="mt-2 text-base italic text-muted-foreground">/{step.word.pronunciation}/</div>
+                  )}
                   <div className="mt-3 text-sm text-muted-foreground">
                     {flipped ? "English" : lang.name}
                   </div>
                 </div>
               </button>
+              <div className="mt-4 flex justify-center">
+                <SpeakButton text={step.word.native} voiceLang={lang.voiceLang} />
+              </div>
               <button
                 onClick={() => { if (idx + 1 >= steps.length) setDone(true); else setIdx((i) => i + 1); }}
                 className="mt-6 w-full rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
@@ -208,14 +275,15 @@ function LessonPlayer() {
               </div>
               <div className="mt-6 grid gap-3">
                 {step.options.map((o) => {
-                  const right = picked && o === step.word.native;
+                  const right = picked !== null && o === step.word.native;
                   const wrong = picked === o && o !== step.word.native;
                   return (
                     <button key={o} onClick={() => pick(o, step.word.native)}
-                      className={`rounded-xl border-2 p-4 text-left text-lg font-semibold transition ${
+                      className={`flex items-center justify-between gap-3 rounded-xl border-2 p-4 text-left text-lg font-semibold transition ${
                         right ? "border-ink bg-sun" : wrong ? "border-destructive bg-destructive/10" : "border-ink/20 bg-card hover:border-ink"
                       }`}>
-                      {o}
+                      <span>{o}</span>
+                      {right && <SpeakButton text={o} voiceLang={lang.voiceLang} size="sm" />}
                     </button>
                   );
                 })}
@@ -229,11 +297,17 @@ function LessonPlayer() {
                 What does this mean?
               </p>
               <div className="mt-4 rounded-3xl border-2 border-ink bg-card p-8 text-center shadow-bold">
-                <div className="font-display text-3xl font-bold text-ink sm:text-4xl">{step.word.native}</div>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="font-display text-3xl font-bold text-ink sm:text-4xl">{step.word.native}</div>
+                  <SpeakButton text={step.word.native} voiceLang={lang.voiceLang} size="sm" />
+                </div>
+                {step.word.pronunciation && (
+                  <div className="mt-2 text-sm italic text-muted-foreground">/{step.word.pronunciation}/</div>
+                )}
               </div>
               <div className="mt-6 grid gap-3">
                 {step.options.map((o) => {
-                  const right = picked && o === step.word.english;
+                  const right = picked !== null && o === step.word.english;
                   const wrong = picked === o && o !== step.word.english;
                   return (
                     <button key={o} onClick={() => pick(o, step.word.english)}
@@ -259,6 +333,30 @@ function LessonPlayer() {
                 }, 700);
               }}
             />
+          )}
+
+          {step.kind === "sentence" && (
+            <div>
+              <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                Example phrase
+              </p>
+              <div className="mt-4 rounded-3xl border-2 border-ink bg-card p-8 text-center shadow-bold">
+                <div className="font-display text-2xl font-bold text-ink sm:text-3xl">{step.sentence.native}</div>
+                {step.sentence.pronunciation && (
+                  <div className="mt-2 text-sm italic text-muted-foreground">/{step.sentence.pronunciation}/</div>
+                )}
+                <div className="mt-4 text-base text-muted-foreground">{step.sentence.english}</div>
+                <div className="mt-4 flex justify-center">
+                  <SpeakButton text={step.sentence.native} voiceLang={lang.voiceLang} />
+                </div>
+              </div>
+              <button
+                onClick={() => { if (idx + 1 >= steps.length) setDone(true); else setIdx((i) => i + 1); }}
+                className="mt-6 w-full rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
+              >
+                Continue →
+              </button>
+            </div>
           )}
         </div>
       </main>

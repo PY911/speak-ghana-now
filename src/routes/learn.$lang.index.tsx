@@ -60,27 +60,54 @@ function LangPage() {
           </div>
         </div>
 
-        <div className="mt-8 space-y-4">
-          {lang.lessons.map((lesson, i) => {
-            const score = progress[lesson.id];
-            const done = score !== undefined;
+        <div className="mt-10 space-y-10">
+          {lang.units.map((unit) => {
+            const lessons = lang.lessons.filter((l) => l.unit === unit.id);
+            if (lessons.length === 0) return null;
+            const completed = lessons.filter((l) => progress[l.id] !== undefined).length;
             return (
-              <Link
-                key={lesson.id}
-                to="/learn/$lang/$lesson"
-                params={{ lang: code, lesson: lesson.id }}
-                className="flex items-center gap-4 rounded-2xl border-2 border-ink bg-card p-5 shadow-bold transition-bounce hover:-translate-y-1 hover:shadow-bold-sun"
-              >
-                <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl ${done ? "bg-sun" : "bg-muted"}`}>
-                  {done ? "✓" : lesson.emoji}
+              <section key={unit.id}>
+                <div className="rounded-2xl border-2 border-ink bg-sun/40 p-5 shadow-bold">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{unit.emoji}</span>
+                    <div className="min-w-0 flex-1">
+                      <h2 className="font-display text-xl font-bold text-ink">{unit.title}</h2>
+                      <p className="text-sm text-muted-foreground">{unit.description}</p>
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      {completed}/{lessons.length}
+                    </div>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Lesson {i + 1}</div>
-                  <h2 className="font-display text-xl font-bold text-ink">{lesson.title}</h2>
-                  <p className="text-sm text-muted-foreground">{lesson.words.length} words{done ? ` • Best: ${score}/${lesson.words.length}` : ""}</p>
+                <div className="mt-4 space-y-3">
+                  {lessons.map((lesson, i) => {
+                    const score = progress[lesson.id];
+                    const done = score !== undefined;
+                    return (
+                      <Link
+                        key={lesson.id}
+                        to="/learn/$lang/$lesson"
+                        params={{ lang: code, lesson: lesson.id }}
+                        className="flex items-center gap-4 rounded-2xl border-2 border-ink bg-card p-5 shadow-bold transition-bounce hover:-translate-y-1 hover:shadow-bold-sun"
+                      >
+                        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl ${done ? "bg-sun" : "bg-muted"}`}>
+                          {done ? "✓" : lesson.emoji}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Lesson {i + 1}</div>
+                          <h2 className="font-display text-xl font-bold text-ink">{lesson.title}</h2>
+                          <p className="text-sm text-muted-foreground">
+                            {lesson.words.length} words
+                            {lesson.sentences?.length ? ` • ${lesson.sentences.length} phrases` : ""}
+                            {done ? ` • Best: ${score}/${lesson.words.length}` : ""}
+                          </p>
+                        </div>
+                        <span className="font-bold">→</span>
+                      </Link>
+                    );
+                  })}
                 </div>
-                <span className="font-bold">→</span>
-              </Link>
+              </section>
             );
           })}
         </div>
