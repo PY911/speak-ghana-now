@@ -69,7 +69,8 @@ function LessonPlayer() {
   const lang = findLanguage(code);
   const lesson = findLesson(code, lessonId);
 
-  const steps = useMemo(() => (lesson ? buildSteps(lesson.words) : []), [lesson]);
+  const steps = useMemo(() => (lesson ? buildSteps(lesson.words, lesson.sentences) : []), [lesson]);
+  const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
