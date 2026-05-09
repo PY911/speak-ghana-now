@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { findLanguage, findLesson, type Word } from "@/lib/lessons";
+import { findLanguage, findLesson, type Word, type Sentence } from "@/lib/lessons";
+import { speak, ttsAvailable } from "@/lib/tts";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { toast } from "sonner";
@@ -14,7 +15,8 @@ type Step =
   | { kind: "flash"; word: Word }
   | { kind: "mc"; word: Word; options: string[] }
   | { kind: "recall"; word: Word; options: string[] }
-  | { kind: "match"; pairs: Word[] };
+  | { kind: "match"; pairs: Word[] }
+  | { kind: "sentence"; sentence: Sentence };
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -26,26 +28,38 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out;
 }
 
-function buildSteps(words: Word[]): Step[] {
+function buildSteps(words: Word[], sentences?: Sentence[]): Step[] {
   const all = words;
   const steps: Step[] = [];
-  // Phase 1: flashcards (introduce)
   words.forEach((w) => steps.push({ kind: "flash", word: w }));
-  // Phase 2: multiple choice (english -> native)
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.native !== w.native)).slice(0, 3).map((x) => x.native);
     steps.push({ kind: "mc", word: w, options: shuffle([w.native, ...distractors]) });
   });
-  // Phase 3: recall (native -> english)
   words.forEach((w) => {
     const distractors = shuffle(all.filter((x) => x.english !== w.english)).slice(0, 3).map((x) => x.english);
     steps.push({ kind: "recall", word: w, options: shuffle([w.english, ...distractors]) });
   });
-  // Phase 4: matching pairs (chunks of 4)
   chunk(shuffle(words), 4).forEach((pairs) => {
     if (pairs.length >= 2) steps.push({ kind: "match", pairs });
   });
+  sentences?.forEach((s) => steps.push({ kind: "sentence", sentence: s }));
   return steps;
+}
+
+function SpeakButton({ text, voiceLang, size = "md" }: { text: string; voiceLang?: string; size?: "sm" | "md" }) {
+  if (!ttsAvailable()) return null;
+  const px = size === "sm" ? "h-9 w-9 text-base" : "h-12 w-12 text-xl";
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); e.preventDefault(); speak(text, voiceLang); }}
+      aria-label={`Listen to ${text}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full border-2 border-ink bg-card ${px} shadow-bold transition-bounce hover:-translate-y-0.5 hover:bg-sun`}
+    >
+      🔊
+    </button>
+  );
 }
 
 function LessonPlayer() {
