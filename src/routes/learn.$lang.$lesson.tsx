@@ -153,7 +153,7 @@ function LessonPlayer() {
               className="rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5">
               Back to {lang.name}
             </Link>
-            <button onClick={() => { setIdx(0); setCorrect(0); setDone(false); setSaved(false); }}
+            <button onClick={() => { setIdx(0); setCorrect(0); setDone(false); setSaved(false); setStarted(true); }}
               className="rounded-xl border-2 border-ink py-3 font-semibold">
               Practice again
             </button>
