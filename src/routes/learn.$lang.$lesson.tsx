@@ -208,6 +208,8 @@ function LessonPlayer() {
       </div>
     );
   }
+
+  const step = steps[idx];
   const progress = ((idx) / steps.length) * 100;
 
   const pick = (opt: string, answer: string) => {
@@ -243,11 +245,17 @@ function LessonPlayer() {
                   <div className="font-display text-4xl font-bold text-ink sm:text-5xl">
                     {flipped ? step.word.english : step.word.native}
                   </div>
+                  {!flipped && step.word.pronunciation && (
+                    <div className="mt-2 text-base italic text-muted-foreground">/{step.word.pronunciation}/</div>
+                  )}
                   <div className="mt-3 text-sm text-muted-foreground">
                     {flipped ? "English" : lang.name}
                   </div>
                 </div>
               </button>
+              <div className="mt-4 flex justify-center">
+                <SpeakButton text={step.word.native} voiceLang={lang.voiceLang} />
+              </div>
               <button
                 onClick={() => { if (idx + 1 >= steps.length) setDone(true); else setIdx((i) => i + 1); }}
                 className="mt-6 w-full rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
@@ -267,14 +275,15 @@ function LessonPlayer() {
               </div>
               <div className="mt-6 grid gap-3">
                 {step.options.map((o) => {
-                  const right = picked && o === step.word.native;
+                  const right = picked !== null && o === step.word.native;
                   const wrong = picked === o && o !== step.word.native;
                   return (
                     <button key={o} onClick={() => pick(o, step.word.native)}
-                      className={`rounded-xl border-2 p-4 text-left text-lg font-semibold transition ${
+                      className={`flex items-center justify-between gap-3 rounded-xl border-2 p-4 text-left text-lg font-semibold transition ${
                         right ? "border-ink bg-sun" : wrong ? "border-destructive bg-destructive/10" : "border-ink/20 bg-card hover:border-ink"
                       }`}>
-                      {o}
+                      <span>{o}</span>
+                      {right && <SpeakButton text={o} voiceLang={lang.voiceLang} size="sm" />}
                     </button>
                   );
                 })}
@@ -288,11 +297,17 @@ function LessonPlayer() {
                 What does this mean?
               </p>
               <div className="mt-4 rounded-3xl border-2 border-ink bg-card p-8 text-center shadow-bold">
-                <div className="font-display text-3xl font-bold text-ink sm:text-4xl">{step.word.native}</div>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="font-display text-3xl font-bold text-ink sm:text-4xl">{step.word.native}</div>
+                  <SpeakButton text={step.word.native} voiceLang={lang.voiceLang} size="sm" />
+                </div>
+                {step.word.pronunciation && (
+                  <div className="mt-2 text-sm italic text-muted-foreground">/{step.word.pronunciation}/</div>
+                )}
               </div>
               <div className="mt-6 grid gap-3">
                 {step.options.map((o) => {
-                  const right = picked && o === step.word.english;
+                  const right = picked !== null && o === step.word.english;
                   const wrong = picked === o && o !== step.word.english;
                   return (
                     <button key={o} onClick={() => pick(o, step.word.english)}
@@ -318,6 +333,30 @@ function LessonPlayer() {
                 }, 700);
               }}
             />
+          )}
+
+          {step.kind === "sentence" && (
+            <div>
+              <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                Example phrase
+              </p>
+              <div className="mt-4 rounded-3xl border-2 border-ink bg-card p-8 text-center shadow-bold">
+                <div className="font-display text-2xl font-bold text-ink sm:text-3xl">{step.sentence.native}</div>
+                {step.sentence.pronunciation && (
+                  <div className="mt-2 text-sm italic text-muted-foreground">/{step.sentence.pronunciation}/</div>
+                )}
+                <div className="mt-4 text-base text-muted-foreground">{step.sentence.english}</div>
+                <div className="mt-4 flex justify-center">
+                  <SpeakButton text={step.sentence.native} voiceLang={lang.voiceLang} />
+                </div>
+              </div>
+              <button
+                onClick={() => { if (idx + 1 >= steps.length) setDone(true); else setIdx((i) => i + 1); }}
+                className="mt-6 w-full rounded-xl bg-ink py-3 font-bold text-sun shadow-bold-sun transition-bounce hover:-translate-y-0.5"
+              >
+                Continue →
+              </button>
+            </div>
           )}
         </div>
       </main>
