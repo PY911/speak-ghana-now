@@ -26,10 +26,10 @@ function LeaderboardPage() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("id,display_name,xp,streak")
-      .order("xp", { ascending: false }).limit(50)
-      .then(({ data }) => { setRows((data as Row[]) ?? []); setBusy(false); });
+    (supabase.rpc as (fn: string) => PromiseLike<{ data: Row[] | null }>)("get_leaderboard")
+      .then(({ data }) => { setRows(data ?? []); setBusy(false); });
   }, [user]);
+
 
   if (!user) return null;
 
