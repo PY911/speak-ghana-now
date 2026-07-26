@@ -15,7 +15,10 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in or create an account to start learning Ghanaian languages." },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s.next) }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
+    const next = safeNext(s.next);
+    return next ? { next } : {};
+  },
   component: AuthPage,
 });
 
