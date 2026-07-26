@@ -73,18 +73,18 @@ export type Database = {
       }
     }
     Views: {
-      leaderboard: {
-        Row: {
-          display_name: string | null
-          id: string | null
-          streak: number | null
-          xp: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_leaderboard: {
+        Args: never
+        Returns: {
+          display_name: string
+          id: string
+          streak: number
+          xp: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
