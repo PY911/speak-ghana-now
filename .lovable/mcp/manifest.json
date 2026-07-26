@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://uruidivpwgfypavhppgy.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "goghana-mcp",
+      "version": "0.1.0",
+      "title": "GoGhana"
+    },
+    "tools": [
+      {
+        "name": "list_languages",
+        "title": "List languages",
+        "description": "List the Ghanaian languages available in GoGhana, with their unit and lesson counts.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_lessons",
+        "title": "List lessons",
+        "description": "List the units and lessons for one GoGhana language, given its language code (e.g. twi, ga, ewe, fante).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "languageCode": {
+              "type": "string",
+              "description": "Language code, e.g. 'twi'."
+            }
+          },
+          "required": [
+            "languageCode"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_lesson",
+        "title": "Get lesson content",
+        "description": "Get the full content of one GoGhana lesson: vocabulary, pronunciations, example sentences, grammar tip and cultural note.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "languageCode": {
+              "type": "string",
+              "description": "Language code, e.g. 'twi'."
+            },
+            "lessonId": {
+              "type": "string",
+              "description": "Lesson id as returned by list_lessons."
+            }
+          },
+          "required": [
+            "languageCode",
+            "lessonId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_progress",
+        "title": "Get my progress",
+        "description": "Get the signed-in learner's GoGhana progress: XP, streak, and completed lessons per language.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "record_lesson_result",
+        "title": "Record lesson result",
+        "description": "Record the signed-in learner's score for a GoGhana lesson. Keeps the best score for that lesson.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "languageCode": {
+              "type": "string",
+              "description": "Language code, e.g. 'twi'."
+            },
+            "lessonId": {
+              "type": "string",
+              "description": "Lesson id as returned by list_lessons."
+            },
+            "score": {
+              "type": "integer",
+              "description": "Number of words answered correctly."
+            }
+          },
+          "required": [
+            "languageCode",
+            "lessonId",
+            "score"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

@@ -4,6 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
+/** Only same-origin relative paths are accepted as a post-login destination. */
+const safeNext = (value: unknown) =>
+  typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : undefined;
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -11,12 +15,17 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in or create an account to start learning Ghanaian languages." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
+    const next = safeNext(s.next);
+    return next ? { next } : {};
+  },
   component: AuthPage,
 });
 
 function AuthPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,8 +33,11 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/learn" });
-  }, [user, loading, navigate]);
+    if (!loading && user) {
+      if (next) window.location.href = next;
+      else navigate({ to: "/learn" });
+    }
+  }, [user, loading, navigate, next]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +48,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/learn`,
+            emailRedirectTo: `${window.location.origin}${next ?? "/learn"}`,
             data: { display_name: name || email.split("@")[0] },
           },
         });
@@ -46,7 +58,8 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
-        navigate({ to: "/learn" });
+        if (next) window.location.href = next;
+        else navigate({ to: "/learn" });
       }
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
