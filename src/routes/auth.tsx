@@ -4,6 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
+/** Only same-origin relative paths are accepted as a post-login destination. */
+const safeNext = (value: unknown) =>
+  typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : undefined;
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -11,12 +15,14 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in or create an account to start learning Ghanaian languages." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s.next) }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,8 +30,11 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/learn" });
-  }, [user, loading, navigate]);
+    if (!loading && user) {
+      if (next) window.location.href = next;
+      else navigate({ to: "/learn" });
+    }
+  }, [user, loading, navigate, next]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
