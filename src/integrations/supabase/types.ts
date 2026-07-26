@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      leaderboard_entries: {
+        Row: {
+          display_name: string | null
+          streak: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          display_name?: string | null
+          streak?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          display_name?: string | null
+          streak?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           best_score: number
@@ -76,15 +100,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_leaderboard: {
-        Args: never
-        Returns: {
-          display_name: string
-          id: string
-          streak: number
-          xp: number
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

@@ -26,9 +26,24 @@ function LeaderboardPage() {
 
   useEffect(() => {
     if (!user) return;
-    (supabase.rpc as (fn: string) => PromiseLike<{ data: Row[] | null }>)("get_leaderboard")
-      .then(({ data }) => { setRows(data ?? []); setBusy(false); });
+    supabase
+      .from("leaderboard_entries")
+      .select("user_id, display_name, xp, streak")
+      .order("xp", { ascending: false })
+      .limit(50)
+      .then(({ data }) => {
+        setRows(
+          (data ?? []).map((r) => ({
+            id: r.user_id as string,
+            display_name: r.display_name as string | null,
+            xp: r.xp as number,
+            streak: r.streak as number,
+          })),
+        );
+        setBusy(false);
+      });
   }, [user]);
+
 
 
   if (!user) return null;
