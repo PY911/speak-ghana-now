@@ -45,7 +45,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/learn`,
+            emailRedirectTo: `${window.location.origin}${next ?? "/learn"}`,
             data: { display_name: name || email.split("@")[0] },
           },
         });
@@ -55,7 +55,8 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
-        navigate({ to: "/learn" });
+        if (next) window.location.href = next;
+        else navigate({ to: "/learn" });
       }
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
