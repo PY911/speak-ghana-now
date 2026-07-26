@@ -73,7 +73,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          display_name: string | null
+          id: string | null
+          streak: number | null
+          xp: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
