@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
 
+import goghanaIcon from "@/assets/goghana-icon.png";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -41,6 +42,16 @@ export const Route = createRootRoute({
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      {
+        rel: "icon",
+        href: `${goghanaIcon}?v=go-ghana-2026-10-27`,
+        type: "image/png",
+      },
+      {
+        rel: "shortcut icon",
+        href: `/favicon.ico?v=go-ghana-2026-10-27`,
+        type: "image/x-icon",
+      },
       {
         rel: "stylesheet",
         href: appCss,
